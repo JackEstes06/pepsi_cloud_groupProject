@@ -1,27 +1,766 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Pepsi Products</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pepsi Store | Products</title>
+
+    <!-- Bootstrap 5 (CDN) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      :root {
+        --brand-blue: #004b93;
+        --brand-red: #e41e2b;
+      }
+
+      body {
+        background: #f6f8fb;
+      }
+
+      .navbar-brand span {
+        letter-spacing: 0.2px;
+      }
+
+      .hero {
+        background: radial-gradient(
+            1100px 600px at 10% 10%,
+            rgba(0, 75, 147, 0.25) 0%,
+            rgba(0, 75, 147, 0) 55%
+          ),
+          radial-gradient(
+            900px 500px at 90% 0%,
+            rgba(228, 30, 43, 0.18) 0%,
+            rgba(228, 30, 43, 0) 60%
+          ),
+          linear-gradient(180deg, #ffffff 0%, #f6f8fb 70%);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      }
+
+      .product-img {
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        background: #fff;
+      }
+
+      .card {
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 10px 22px rgba(16, 24, 40, 0.06);
+      }
+
+      .badge-brand {
+        background: rgba(0, 75, 147, 0.1);
+        color: var(--brand-blue);
+        border: 1px solid rgba(0, 75, 147, 0.18);
+      }
+
+      .btn-brand {
+        background: var(--brand-blue);
+        border-color: var(--brand-blue);
+      }
+      .btn-brand:hover {
+        background: #003e79;
+        border-color: #003e79;
+      }
+
+      .btn-outline-brand {
+        border-color: rgba(0, 75, 147, 0.35);
+        color: var(--brand-blue);
+      }
+      .btn-outline-brand:hover {
+        background: rgba(0, 75, 147, 0.08);
+        border-color: rgba(0, 75, 147, 0.5);
+        color: var(--brand-blue);
+      }
+
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.05) 25%,
+          rgba(0, 0, 0, 0.08) 37%,
+          rgba(0, 0, 0, 0.05) 63%
+        );
+        background-size: 400% 100%;
+        animation: shimmer 1.2s ease-in-out infinite;
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: 100% 0;
+        }
+        100% {
+          background-position: 0 0;
+        }
+      }
+
+      .footer {
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        background: #ffffff;
+      }
+    </style>
   </head>
+
   <body>
-    <h1>Pepsi Products</h1>
-    <div id="list"></div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+          <span
+            class="d-inline-flex align-items-center justify-content-center rounded-3"
+            style="
+              width: 36px;
+              height: 36px;
+              background: linear-gradient(
+                135deg,
+                var(--brand-blue),
+                var(--brand-red)
+              );
+              color: white;
+              font-weight: 700;
+            "
+            >P</span
+          >
+          <span class="fw-semibold">Pepsi Store</span>
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#nav"
+          aria-controls="nav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="nav">
+          <div
+            class="ms-auto d-flex flex-column flex-lg-row gap-2 gap-lg-3 align-items-lg-center"
+          >
+            <form class="d-flex" role="search" onsubmit="return false;">
+              <input
+                id="searchInput"
+                class="form-control"
+                type="search"
+                placeholder="Search products…"
+                aria-label="Search products"
+              />
+            </form>
+            <div class="d-flex gap-2">
+              <button
+                id="refreshBtn"
+                class="btn btn-outline-brand"
+                type="button"
+              >
+                Refresh
+              </button>
+              <button class="btn btn-brand text-white" type="button" disabled>
+                Cart (0)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero py-5">
+      <div class="container">
+        <div class="row align-items-center g-4">
+          <div class="col-12 col-lg-7">
+            <span class="badge badge-brand rounded-pill px-3 py-2 mb-3">
+              Official collection • Fast shipping
+            </span>
+            <h1 class="display-6 fw-bold mb-3">
+              Refresh your fridge with Pepsi favorites
+            </h1>
+            <p class="lead text-secondary mb-4">
+              Browse our catalog of Pepsi products and discover something new.
+              Built to look great on mobile and desktop.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="#products" class="btn btn-brand text-white btn-lg"
+                >Shop products</a
+              >
+              <button
+                id="scrollDealsBtn"
+                class="btn btn-outline-brand btn-lg"
+                type="button"
+              >
+                View highlights
+              </button>
+            </div>
+          </div>
+          <div class="col-12 col-lg-5">
+            <div class="card p-3">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <div class="fw-semibold">Today’s picks</div>
+                    <div class="text-secondary small">
+                      Popular items from your catalog
+                    </div>
+                  </div>
+                  <span class="badge text-bg-light border">Live</span>
+                </div>
+
+                <div id="highlights" class="mt-3 d-grid gap-2">
+                  <!-- Filled by JS -->
+                  <div
+                    class="rounded-3 p-3 skeleton"
+                    style="height: 72px"
+                  ></div>
+                  <div
+                    class="rounded-3 p-3 skeleton"
+                    style="height: 72px"
+                  ></div>
+                  <div
+                    class="rounded-3 p-3 skeleton"
+                    style="height: 72px"
+                  ></div>
+                </div>
+              </div>
+            </div>
+            <div class="text-secondary small mt-2">
+              *Highlights update automatically based on available products.
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="py-5" id="products">
+      <div class="container">
+        <div
+          class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-4"
+        >
+          <div>
+            <h2 class="h3 fw-bold mb-1">Products</h2>
+            <div class="text-secondary">
+              Search, sort, and browse the full catalog.
+            </div>
+          </div>
+
+          <div class="d-flex flex-column flex-sm-row gap-2">
+            <select
+              id="sortSelect"
+              class="form-select"
+              aria-label="Sort products"
+            >
+              <option value="name-asc" selected>Sort: Name (A → Z)</option>
+              <option value="name-desc">Sort: Name (Z → A)</option>
+            </select>
+
+            <div class="btn-group" role="group" aria-label="View toggle">
+              <button
+                id="gridBtn"
+                type="button"
+                class="btn btn-outline-secondary active"
+              >
+                Grid
+              </button>
+              <button
+                id="listBtn"
+                type="button"
+                class="btn btn-outline-secondary"
+              >
+                List
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div
+          id="errorAlert"
+          class="alert alert-danger d-none"
+          role="alert"
+        ></div>
+        <div id="emptyState" class="text-center py-5 d-none">
+          <div class="mx-auto" style="max-width: 520px">
+            <h3 class="h5 fw-semibold">No products found</h3>
+            <p class="text-secondary mb-3">
+              Try a different search term or refresh the catalog.
+            </p>
+            <button
+              id="emptyRefreshBtn"
+              class="btn btn-outline-brand"
+              type="button"
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- Product container -->
+        <div id="productContainer" class="row g-4">
+          <!-- Skeleton cards while loading -->
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100">
+              <div class="product-img skeleton"></div>
+              <div class="card-body">
+                <div
+                  class="skeleton rounded"
+                  style="height: 18px; width: 70%"
+                ></div>
+                <div
+                  class="skeleton rounded mt-2"
+                  style="height: 12px; width: 45%"
+                ></div>
+                <div class="d-flex gap-2 mt-4">
+                  <div
+                    class="skeleton rounded"
+                    style="height: 38px; width: 110px"
+                  ></div>
+                  <div
+                    class="skeleton rounded"
+                    style="height: 38px; width: 110px"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100">
+              <div class="product-img skeleton"></div>
+              <div class="card-body">
+                <div
+                  class="skeleton rounded"
+                  style="height: 18px; width: 65%"
+                ></div>
+                <div
+                  class="skeleton rounded mt-2"
+                  style="height: 12px; width: 40%"
+                ></div>
+                <div class="d-flex gap-2 mt-4">
+                  <div
+                    class="skeleton rounded"
+                    style="height: 38px; width: 110px"
+                  ></div>
+                  <div
+                    class="skeleton rounded"
+                    style="height: 38px; width: 110px"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100">
+              <div class="product-img skeleton"></div>
+              <div class="card-body">
+                <div
+                  class="skeleton rounded"
+                  style="height: 18px; width: 75%"
+                ></div>
+                <div
+                  class="skeleton rounded mt-2"
+                  style="height: 12px; width: 42%"
+                ></div>
+                <div class="d-flex gap-2 mt-4">
+                  <div
+                    class="skeleton rounded"
+                    style="height: 38px; width: 110px"
+                  ></div>
+                  <div
+                    class="skeleton rounded"
+                    style="height: 38px; width: 110px"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick highlights section anchor -->
+        <div id="highlightsAnchor" class="mt-5"></div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer py-4">
+      <div class="container">
+        <div
+          class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2"
+        >
+          <div class="text-secondary small">
+            © <span id="year"></span> Pepsi Store • Demo storefront
+          </div>
+          <div class="d-flex gap-3 small">
+            <a class="link-secondary text-decoration-none" href="#products"
+              >Products</a
+            >
+            <a
+              class="link-secondary text-decoration-none"
+              href="#"
+              onclick="alert('Demo site'); return false;"
+              >Support</a
+            >
+            <a
+              class="link-secondary text-decoration-none"
+              href="#"
+              onclick="alert('Demo site'); return false;"
+              >Privacy</a
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Product modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="modalTitle" class="modal-title">Product</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-4 align-items-center">
+              <div class="col-12 col-md-5">
+                <img
+                  id="modalImg"
+                  class="img-fluid rounded border bg-white"
+                  alt=""
+                />
+              </div>
+              <div class="col-12 col-md-7">
+                <p class="text-secondary mb-3">
+                  This is a demo storefront view. Product details are pulled
+                  from your API.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge text-bg-light border">In stock</span>
+                  <span class="badge badge-brand">Fast shipping</span>
+                </div>
+                <div class="mt-4 d-flex gap-2">
+                  <button
+                    class="btn btn-brand text-white"
+                    type="button"
+                    disabled
+                  >
+                    Add to cart
+                  </button>
+                  <button
+                    class="btn btn-outline-brand"
+                    type="button"
+                    data-bs-dismiss="modal"
+                  >
+                    Continue shopping
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <span class="text-secondary small"
+              >Tip: Add CloudFront path routing so <code>/api/*</code> hits your
+              API.</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
     <script>
-      fetch("/api/products")
-        .then((r) => r.json())
-        .then((items) => {
-          const el = document.getElementById("list");
-          el.innerHTML = items
-            .map(
-              (p) =>
-                `<div style="margin:12px 0">
-              <img src="${p.image_url}" style="height:80px;vertical-align:middle;margin-right:10px"/>
-              <span>${p.name}</span>
-            </div>`
-            )
-            .join("");
+      // --- Utilities ---
+      const $ = (id) => document.getElementById(id);
+
+      const state = {
+        allProducts: [],
+        filtered: [],
+        view: "grid", // "grid" | "list"
+        sort: "name-asc",
+        query: "",
+      };
+
+      function normalize(str) {
+        return (str || "").toString().trim().toLowerCase();
+      }
+
+      function safeName(p) {
+        return p && p.name ? p.name : "Unnamed product";
+      }
+
+      function safeImg(p) {
+        // fallback if API gives empty url
+        return p && p.image_url
+          ? p.image_url
+          : "https://via.placeholder.com/640x480?text=Pepsi+Product";
+      }
+
+      function applyFilterSort() {
+        const q = normalize(state.query);
+        let items = state.allProducts.slice();
+
+        if (q) {
+          items = items.filter((p) => normalize(p.name).includes(q));
+        }
+
+        items.sort((a, b) => {
+          const an = normalize(a.name);
+          const bn = normalize(b.name);
+          if (state.sort === "name-desc") return bn.localeCompare(an);
+          return an.localeCompare(bn);
         });
+
+        state.filtered = items;
+      }
+
+      function setError(msg) {
+        const el = $("errorAlert");
+        if (!msg) {
+          el.classList.add("d-none");
+          el.textContent = "";
+          return;
+        }
+        el.textContent = msg;
+        el.classList.remove("d-none");
+      }
+
+      function setEmptyState(show) {
+        $("emptyState").classList.toggle("d-none", !show);
+      }
+
+      function renderHighlights() {
+        const el = $("highlights");
+        const top = state.filtered.slice(0, 3);
+
+        if (!top.length) {
+          el.innerHTML = `<div class="text-secondary small">No highlights available.</div>`;
+          return;
+        }
+
+        el.innerHTML = top
+          .map((p) => {
+            const name = safeName(p);
+            return `
+              <button type="button" class="btn btn-light border text-start rounded-3 p-3" onclick="openModal('${encodeURIComponent(
+                name
+              )}')">
+                <div class="fw-semibold text-truncate">${name}</div>
+                <div class="text-secondary small">Tap to view</div>
+              </button>
+            `;
+          })
+          .join("");
+      }
+
+      function renderProducts() {
+        const container = $("productContainer");
+        container.innerHTML = "";
+
+        setEmptyState(state.filtered.length === 0);
+
+        if (state.filtered.length === 0) return;
+
+        if (state.view === "list") {
+          // LIST VIEW
+          container.innerHTML = state.filtered
+            .map((p) => {
+              const name = safeName(p);
+              const img = safeImg(p);
+              const enc = encodeURIComponent(name);
+
+              return `
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="d-flex gap-3 align-items-center">
+                        <img
+                          src="${img}"
+                          alt="${name}"
+                          style="width: 84px; height: 84px; object-fit: contain;"
+                          class="rounded border bg-white"
+                          loading="lazy"
+                        />
+                        <div class="flex-grow-1">
+                          <div class="d-flex align-items-center justify-content-between gap-2">
+                            <h3 class="h6 fw-semibold mb-1">${name}</h3>
+                            <span class="badge text-bg-light border">New</span>
+                          </div>
+                          <div class="text-secondary small">
+                            Classic refreshment • Ships fast
+                          </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                          <button class="btn btn-outline-brand" type="button" onclick="openModal('${enc}')">
+                            Details
+                          </button>
+                          <button class="btn btn-brand text-white" type="button" disabled>
+                            Add
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            })
+            .join("");
+
+          return;
+        }
+
+        // GRID VIEW
+        container.innerHTML = state.filtered
+          .map((p) => {
+            const name = safeName(p);
+            const img = safeImg(p);
+            const enc = encodeURIComponent(name);
+
+            return `
+              <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100">
+                  <img class="product-img rounded-top" src="${img}" alt="${name}" loading="lazy" />
+                  <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-start justify-content-between gap-2">
+                      <h3 class="h6 fw-semibold mb-1">${name}</h3>
+                      <span class="badge text-bg-light border">New</span>
+                    </div>
+                    <p class="text-secondary small mb-3">
+                      Crisp taste • Great with meals • Fan favorite
+                    </p>
+                    <div class="mt-auto d-flex gap-2">
+                      <button class="btn btn-outline-brand w-50" type="button" onclick="openModal('${enc}')">
+                        Details
+                      </button>
+                      <button class="btn btn-brand text-white w-50" type="button" disabled>
+                        Add to cart
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      async function loadProducts() {
+        setError("");
+        setEmptyState(false);
+
+        // show skeletons quickly
+        $("productContainer").innerHTML = `
+          <div class="col-12 col-sm-6 col-lg-4"><div class="card h-100"><div class="product-img skeleton"></div><div class="card-body"><div class="skeleton rounded" style="height:18px;width:70%"></div><div class="skeleton rounded mt-2" style="height:12px;width:45%"></div><div class="d-flex gap-2 mt-4"><div class="skeleton rounded" style="height:38px;width:110px"></div><div class="skeleton rounded" style="height:38px;width:110px"></div></div></div></div></div>
+          <div class="col-12 col-sm-6 col-lg-4"><div class="card h-100"><div class="product-img skeleton"></div><div class="card-body"><div class="skeleton rounded" style="height:18px;width:65%"></div><div class="skeleton rounded mt-2" style="height:12px;width:40%"></div><div class="d-flex gap-2 mt-4"><div class="skeleton rounded" style="height:38px;width:110px"></div><div class="skeleton rounded" style="height:38px;width:110px"></div></div></div></div></div>
+          <div class="col-12 col-sm-6 col-lg-4"><div class="card h-100"><div class="product-img skeleton"></div><div class="card-body"><div class="skeleton rounded" style="height:18px;width:75%"></div><div class="skeleton rounded mt-2" style="height:12px;width:42%"></div><div class="d-flex gap-2 mt-4"><div class="skeleton rounded" style="height:38px;width:110px"></div><div class="skeleton rounded" style="height:38px;width:110px"></div></div></div></div></div>
+        `;
+
+        try {
+          const res = await fetch("/api/products", {
+            headers: { Accept: "application/json" },
+          });
+          if (!res.ok)
+            throw new Error(`API returned ${res.status} ${res.statusText}`);
+
+          const items = await res.json();
+          if (!Array.isArray(items))
+            throw new Error("API response was not an array.");
+
+          state.allProducts = items;
+          applyFilterSort();
+          renderHighlights();
+          renderProducts();
+        } catch (err) {
+          setError(
+            `Couldn't load products from /api/products. ${err.message} ` +
+              `If you're hosting this on S3, you may need CloudFront routing for /api/* to your API.`
+          );
+          $(
+            "highlights"
+          ).innerHTML = `<div class="text-secondary small">Highlights unavailable.</div>`;
+          $("productContainer").innerHTML = "";
+          setEmptyState(true);
+        }
+      }
+
+      // Modal
+      function openModal(encodedName) {
+        const name = decodeURIComponent(encodedName);
+        const product = state.allProducts.find((p) => safeName(p) === name) || {
+          name,
+        };
+        $("modalTitle").textContent = safeName(product);
+        $("modalImg").src = safeImg(product);
+        $("modalImg").alt = safeName(product);
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("productModal")
+        );
+        modal.show();
+      }
+      window.openModal = openModal;
+
+      // Wire up controls
+      function init() {
+        $("year").textContent = new Date().getFullYear();
+
+        $("searchInput").addEventListener("input", (e) => {
+          state.query = e.target.value || "";
+          applyFilterSort();
+          renderHighlights();
+          renderProducts();
+        });
+
+        $("sortSelect").addEventListener("change", (e) => {
+          state.sort = e.target.value;
+          applyFilterSort();
+          renderHighlights();
+          renderProducts();
+        });
+
+        $("gridBtn").addEventListener("click", () => {
+          state.view = "grid";
+          $("gridBtn").classList.add("active");
+          $("listBtn").classList.remove("active");
+          renderProducts();
+        });
+
+        $("listBtn").addEventListener("click", () => {
+          state.view = "list";
+          $("listBtn").classList.add("active");
+          $("gridBtn").classList.remove("active");
+          renderProducts();
+        });
+
+        const doRefresh = () => loadProducts();
+        $("refreshBtn").addEventListener("click", doRefresh);
+        $("emptyRefreshBtn").addEventListener("click", doRefresh);
+
+        $("scrollDealsBtn").addEventListener("click", () => {
+          document
+            .getElementById("highlightsAnchor")
+            .scrollIntoView({ behavior: "smooth" });
+        });
+
+        loadProducts();
+      }
+
+      init();
     </script>
   </body>
 </html>
