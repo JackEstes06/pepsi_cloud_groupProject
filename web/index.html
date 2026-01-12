@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Pepsi Products</title>
+  </head>
+  <body>
+    <h1>Pepsi Products</h1>
+    <div id="list"></div>
+    <script>
+      fetch("/api/products")
+        .then((r) => r.json())
+        .then((items) => {
+          const el = document.getElementById("list");
+          el.innerHTML = items
+            .map(
+              (p) =>
+                `<div style="margin:12px 0">
+              <img src="${p.image_url}" style="height:80px;vertical-align:middle;margin-right:10px"/>
+              <span>${p.name}</span>
+            </div>`
+            )
+            .join("");
+        });
+    </script>
+  </body>
+</html>
